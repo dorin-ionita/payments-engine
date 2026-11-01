@@ -20,6 +20,7 @@ const SCALE: u64 = 10_000;
 pub struct Amount(i64);
 
 impl Amount {
+    /// Zero, the balance of a new account.
     pub const ZERO: Amount = Amount(0);
 
     /// Builds an amount from a raw count of 1/10 000 units.
@@ -27,10 +28,12 @@ impl Amount {
         Amount(units)
     }
 
+    /// `self + other`, or `None` if the result would overflow.
     pub fn checked_add(self, other: Amount) -> Option<Amount> {
         self.0.checked_add(other.0).map(Amount)
     }
 
+    /// `self - other`, or `None` if the result would overflow.
     pub fn checked_sub(self, other: Amount) -> Option<Amount> {
         self.0.checked_sub(other.0).map(Amount)
     }
@@ -39,12 +42,17 @@ impl Amount {
 /// Why a string could not be read as an [`Amount`].
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum ParseAmountError {
+    /// Nothing but whitespace.
     #[error("amount is empty")]
     Empty,
+    /// Not a plain decimal: signs other than a leading `-`, exponents,
+    /// separators, letters.
     #[error("amount is not a plain decimal number")]
     Invalid,
+    /// Non-zero digits beyond the fourth decimal place, which would need rounding.
     #[error("amount has more than {DECIMALS} significant decimal places")]
     TooPrecise,
+    /// Too large to fit.
     #[error("amount is too large")]
     Overflow,
 }

@@ -10,7 +10,7 @@ use crate::amount::Amount;
 /// Balances of one client.
 ///
 /// Invariant: `total == available + held`. All three fields are written only
-/// by [`Account::update`], which computes `total` itself, so they cannot
+/// by the private `update` method, which computes `total` itself, so they cannot
 /// drift apart.
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct Account {
@@ -23,29 +23,38 @@ pub struct Account {
 /// Why a balance operation was refused. The account is unchanged in every case.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum AccountError {
+    /// The account was locked by a chargeback and accepts nothing more.
     #[error("account is locked")]
     Locked,
+    /// A withdrawal asked for more than the available funds.
     #[error("insufficient available funds")]
     InsufficientFunds,
+    /// A release or chargeback asked for more than the held funds.
     #[error("insufficient held funds")]
     InsufficientHeld,
+    /// A balance, or the total, would not fit in an [`Amount`].
     #[error("balance would overflow")]
     Overflow,
 }
 
 impl Account {
+    /// Funds the client can use: withdraw, trade, and so on. Negative when a
+    /// dispute held more than was available (assumption 4).
     pub fn available(&self) -> Amount {
         self.available
     }
 
+    /// Funds held while a dispute is open. Never negative.
     pub fn held(&self) -> Amount {
         self.held
     }
 
+    /// `available + held`.
     pub fn total(&self) -> Amount {
         self.total
     }
 
+    /// Whether a chargeback has frozen the account.
     pub fn is_locked(&self) -> bool {
         self.locked
     }

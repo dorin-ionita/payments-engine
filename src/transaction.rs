@@ -36,41 +36,44 @@ impl fmt::Display for TxId {
 /// One validated input row. Deposit and withdrawal amounts are always > 0.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Transaction {
+    /// Credits the client's available funds.
     Deposit {
         client: ClientId,
         tx: TxId,
         amount: Amount,
     },
+    /// Debits the client's available funds, if they suffice.
     Withdrawal {
         client: ClientId,
         tx: TxId,
         amount: Amount,
     },
-    Dispute {
-        client: ClientId,
-        tx: TxId,
-    },
-    Resolve {
-        client: ClientId,
-        tx: TxId,
-    },
-    Chargeback {
-        client: ClientId,
-        tx: TxId,
-    },
+    /// Claims that deposit `tx` was erroneous: its amount is held.
+    Dispute { client: ClientId, tx: TxId },
+    /// Closes the dispute on `tx` in the client's favour: the amount is released.
+    Resolve { client: ClientId, tx: TxId },
+    /// Closes the dispute on `tx` by reversing it: the amount is removed and
+    /// the account locked.
+    Chargeback { client: ClientId, tx: TxId },
 }
 
 /// Why a row was rejected before reaching the engine.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum ParseError {
+    /// Wrong shape: missing columns, or a client or tx id that isn't a valid
+    /// `u16` / `u32`.
     #[error("malformed row: {0}")]
     Malformed(String),
+    /// A `type` other than the five known ones (matched exactly, lowercase).
     #[error("unknown transaction type {0:?}")]
     UnknownType(String),
+    /// A deposit or withdrawal without an amount.
     #[error("missing amount")]
     MissingAmount,
+    /// A deposit or withdrawal amount that isn't a valid [`Amount`].
     #[error("invalid amount: {0}")]
     InvalidAmount(#[from] ParseAmountError),
+    /// A deposit or withdrawal amount of zero or less.
     #[error("amount must be greater than zero")]
     NonPositiveAmount,
 }
@@ -128,6 +131,7 @@ impl Transaction {
         })
     }
 
+    /// The client the row names (for routing, e.g. to a shard).
     pub fn client(&self) -> ClientId {
         match *self {
             Transaction::Deposit { client, .. }
@@ -138,6 +142,8 @@ impl Transaction {
         }
     }
 
+    /// The transaction id: its own for deposits and withdrawals, the
+    /// referenced deposit's for disputes, resolves and chargebacks.
     pub fn tx(&self) -> TxId {
         match *self {
             Transaction::Deposit { tx, .. }

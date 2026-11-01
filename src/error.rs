@@ -7,6 +7,7 @@
 use crate::account::AccountError;
 use crate::transaction::{ClientId, TxId};
 
+/// Why a transaction was refused. The refused transaction changed nothing.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum EngineError {
     /// Assumption 3: a locked account accepts nothing.
@@ -17,12 +18,17 @@ pub enum EngineError {
     #[error("tx {tx}: duplicate transaction id, ignored")]
     DuplicateTx { tx: TxId },
 
+    /// A withdrawal asked for more than the available funds; held funds
+    /// can't be withdrawn.
     #[error("client {client}: insufficient available funds for tx {tx}")]
     InsufficientFunds { client: ClientId, tx: TxId },
 
+    /// The transaction would push a balance beyond what an amount can hold.
     #[error("client {client}: tx {tx} would overflow the balance, ignored")]
     Overflow { client: ClientId, tx: TxId },
 
+    /// A dispute, resolve or chargeback names a transaction the engine never
+    /// accepted. No client is created.
     #[error("tx {tx}: unknown transaction, ignored")]
     UnknownTx { tx: TxId },
 
@@ -38,6 +44,7 @@ pub enum EngineError {
     #[error("tx {tx}: already disputed, needs manual review")]
     AlreadyDisputed { tx: TxId },
 
+    /// A resolve or chargeback names a transaction that has no open dispute.
     #[error("tx {tx}: not under dispute, ignored")]
     NotDisputed { tx: TxId },
 

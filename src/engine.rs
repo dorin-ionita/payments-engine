@@ -6,7 +6,7 @@
 //! with the size of the input.
 //!
 //! A deposit moves through a small dispute lifecycle, all of it in
-//! [`Engine::settle`]:
+//! the private `Engine::settle` method:
 //!
 //! ```text
 //! Normal --dispute--> Disputed --resolve----> Resolved     (final)
@@ -55,6 +55,9 @@ impl fmt::Display for Notice {
     }
 }
 
+/// Client accounts plus the ledger of accepted transactions. Feed it
+/// transactions in input order with [`Engine::process`], then read the
+/// result with [`Engine::accounts`].
 #[derive(Debug, Default)]
 pub struct Engine {
     accounts: HashMap<ClientId, Account>,
@@ -98,6 +101,7 @@ impl Engine {
         Self::default()
     }
 
+    /// An engine with an explicit [`DisputePolicy`].
     pub fn with_policy(policy: DisputePolicy) -> Self {
         Engine {
             policy,
