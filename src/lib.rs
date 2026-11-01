@@ -9,6 +9,8 @@
 
 pub mod account;
 pub mod amount;
+pub mod transaction;
 
 pub use account::{Account, AccountError};
 pub use amount::{Amount, ParseAmountError};
+pub use transaction::{csv_reader, ClientId, ParseError, Transaction, TxId};
