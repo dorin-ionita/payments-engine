@@ -3,7 +3,7 @@ name = "payments_engine"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.75"
-description = "A toy payments engine: streams transactions from CSV and reports client balances."
+description = "A small payments engine: streams transactions from CSV and reports client balances."
 publish = false
 
 [dependencies]

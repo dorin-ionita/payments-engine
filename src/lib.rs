@@ -1,4 +1,4 @@
-//! A toy payments engine: reads client transactions, maintains account
+//! A small payments engine: reads client transactions, maintains account
 //! balances, handles disputes, and reports the final state of every account.
 //!
 //! The library does no I/O of its own; the binary in `main.rs` wires it to
