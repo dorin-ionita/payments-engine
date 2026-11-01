@@ -1,0 +1,10 @@
+type,client,tx,amount
+deposit,12,100,50.25
+deposit,3,7,10
+withdrawal,12,101,20.25
+deposit,3,5,0.5
+withdrawal,3,9,10.5
+withdrawal,12,102,30.0001
+deposit,40,300,1.1
+withdrawal,40,301,1.1
+withdrawal,55,400,1

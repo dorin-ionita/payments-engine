@@ -1,0 +1,8 @@
+type,client,tx,amount
+deposit,21,1,100
+deposit,21,2,40.5
+dispute,21,2,
+withdrawal,21,5,120
+withdrawal,21,3,70
+resolve,21,2,
+withdrawal,21,4,70

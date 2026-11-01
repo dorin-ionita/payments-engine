@@ -1,0 +1,6 @@
+type,client,tx,amount
+deposit,64,500,1000
+withdrawal,64,501,950
+dispute,64,500,
+chargeback,64,500,
+withdrawal,64,502,10

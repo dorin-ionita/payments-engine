@@ -12,6 +12,9 @@ csv = "1.3"
 serde = { version = "1", features = ["derive"] }
 thiserror = "1"
 
+[dev-dependencies]
+proptest = { version = "1", default-features = false, features = ["std"] }
+
 [profile.release]
 # Keep integer overflow checks on in release builds as a second line of defence;
 # all money arithmetic is already checked explicitly.
