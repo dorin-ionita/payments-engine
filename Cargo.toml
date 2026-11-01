@@ -1,0 +1,18 @@
+[package]
+name = "payments_engine"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+description = "A toy payments engine: streams transactions from CSV and reports client balances."
+publish = false
+
+[dependencies]
+anyhow = "1"
+csv = "1.3"
+serde = { version = "1", features = ["derive"] }
+thiserror = "1"
+
+[profile.release]
+# Keep integer overflow checks on in release builds as a second line of defence;
+# all money arithmetic is already checked explicitly.
+overflow-checks = true

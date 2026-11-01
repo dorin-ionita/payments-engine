@@ -1,0 +1,6 @@
+/target
+
+# Never commit source documents or ad-hoc/generated inputs.
+# Test fixtures live in tests/fixtures/ and are not affected by this rule.
+*.pdf
+/*.csv
