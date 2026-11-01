@@ -7,6 +7,8 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(not(test), deny(clippy::unwrap_used, clippy::expect_used))]
 
+pub mod account;
 pub mod amount;
 
+pub use account::{Account, AccountError};
 pub use amount::{Amount, ParseAmountError};
